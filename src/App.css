@@ -1,0 +1,9 @@
+.cell{
+  background-color: black;
+  width: 100px;
+  height: 100px;
+  font-size: 36px;
+  border: 2px solid #cccccc;
+  cursor: pointer;
+  transition: back; 
+}
