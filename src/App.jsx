@@ -4,9 +4,10 @@ import Spinner from './components/Spinner';
 import Card from './components/Card'
 import useDebounceValue from './hooks/DeBounce';
 import Pagination from './components/Pagination';
-import FormValidation from './components/Validation';
+// import FormValidation from './components/Validation';
 import Navbar  from './components/Navbar';
 import Category from './components/Category';
+
 
 const API_BASE_URL = 'https://api.themoviedb.org/3'
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
@@ -161,6 +162,13 @@ return (
   {/* <CustomCursor /> */}
   <main>
   <Navbar />
+  <div className='relative w-full min-h-screen  overflow-hidden'>
+    <video 
+    className='absolute w-full h-full top-0 left-0 z-0 opacity-20'
+      autoPlay
+      muted
+      loop
+      src="./bg.mp4"></video>
   <h1 className='text-7xl mt-32 p-8 max-md:text-6xl'>
     Welcome To Biggest<br/>
     <span className='text-gradient inline-block text-8xl max-md:text-5xl'> Movie Hub</span>
@@ -184,7 +192,8 @@ return (
           ))}
         </ul>
       </section>
-  <FormValidation /> 
+      </div>
+  {/* <FormValidation />  */}
     <div className='pattern' />
     <div className='wrapper'>
       <header>
