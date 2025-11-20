@@ -192,6 +192,7 @@ return (
           ))}
         </ul>
       </section>
+      </div>
   <FormValidation />
  
     <div className='pattern' />
