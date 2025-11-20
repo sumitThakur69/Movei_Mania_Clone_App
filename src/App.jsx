@@ -192,8 +192,8 @@ return (
           ))}
         </ul>
       </section>
-      </div>
-  {/* <FormValidation />  */}
+  <FormValidation />
+ 
     <div className='pattern' />
     <div className='wrapper'>
       <header>
