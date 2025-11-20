@@ -6,7 +6,7 @@ import useDebounceValue from './hooks/DeBounce';
 import Pagination from './components/Pagination';
 import FormValidation from './components/Validation';
 import Navbar  from './components/Navbar';
-import CustomCursor from './components/CustomCursor';
+import Category from './components/Category';
 
 const API_BASE_URL = 'https://api.themoviedb.org/3'
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
@@ -27,6 +27,10 @@ const [isLoading , setIsLoading] = useState(false)
 const [trending , setTrending] = useState([])
 const [currentPage , setCurrentPage] = useState(1)
 const [totalPages , setTotalPages] = useState(1)
+const [filters , setFilters] = useState({
+  category: 'rating',
+  sorting: 'sorting',
+});
 // const [deBounce , setDeBounce] = useState('')
 
 const deBounce = useDebounceValue(searchTerm,1000)
@@ -102,6 +106,56 @@ useEffect(()=>{
   fetchTrending();
 },[])
 
+useEffect(()=>{
+  const saved = localStorage.getItem("filters");
+  if(saved) {
+    setFilters(JSON.parse(saved));
+  }
+},[])
+
+const handleFilterChange = (newFilters) => {
+  setFilters(newFilters);
+  localStorage.setItem("filters", JSON.stringify(newFilters));
+}
+
+const sortMovies = (movies) => {
+  const sorted = [...movies];
+
+  sorted.sort((a,b)=>{
+    let valA , valB;
+
+    switch(filters.category){
+      case 'rating':
+        valA = a.vote_average || 0;
+        valB = b.vote_average || 0;
+        break;
+
+      case 'year':
+        valA = new Date(a.release_date || '1900').getFullYear();
+        valB = new Date(b.release_date || '1900').getFullYear();
+        break;
+      case 'title':
+        valA = a.title?.toLowerCase() || '';
+        valB = b.title?.toLowerCase() || '';
+        break;
+      case 'popularity':
+        valA = a.popularity || 0;
+        valB = b.popularity || 0;
+        break;
+      default:
+      return 0;
+    }
+
+    if(typeof valA === 'string'){
+      return filters.sorting === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+    }
+    return filters.sorting === 'asc' ? valA - valB : valB - valA;
+  })
+  return sorted;
+}
+
+const sortedMovies = sortMovies(movieList);
+
 return (
   <>
   {/* <CustomCursor /> */}
@@ -130,8 +184,7 @@ return (
           ))}
         </ul>
       </section>
-  <FormValidation />
-  
+  <FormValidation /> 
     <div className='pattern' />
     <div className='wrapper'>
       <header>
@@ -141,10 +194,8 @@ return (
         </h1>
         <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       </header>
-
       <section className="trending">
         <h2>Trending Movies</h2>
-
         <ul>
           {trending.slice(0, 5).map((movie, index) => (
             <li key={movie.id}>
@@ -161,10 +212,11 @@ return (
           ))}
         </ul>
       </section>
-
       <section className='all-movies'>
-        <h2 className='mt-12'>All Movies</h2>
-
+        <div className='flex flex-row items-center justify-between mt-12'>
+        <h2>All Movies</h2>
+        <Category filters={filters} onFilterChange={handleFilterChange} />
+        </div>
         {isLoading ? (
           <Spinner />
         ) : error ? (
@@ -172,11 +224,10 @@ return (
         ) : (
           <>
             <ul>
-              {movieList.map((movie) => (
+              {sortedMovies.map((movie) => (
                 <Card key={movie.id} movie={movie} />
               ))}
             </ul>
-
             {totalPages > 1 && (
               <Pagination
                 currentPage={currentPage}
@@ -187,12 +238,9 @@ return (
           </>
         )}
       </section>
-    </div>
-  
+    </div> 
   </main>
   </>
 );
-
 }
-
 export default App;
