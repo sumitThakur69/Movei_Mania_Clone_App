@@ -184,7 +184,8 @@ return (
           ))}
         </ul>
       </section>
-  <FormValidation /> 
+  <FormValidation />
+ 
     <div className='pattern' />
     <div className='wrapper'>
       <header>
